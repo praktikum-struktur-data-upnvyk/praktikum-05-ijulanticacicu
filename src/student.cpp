@@ -238,7 +238,11 @@ using namespace std;
 // =============================================================================
 
 bool push(Stack& s, int nilai) {
-    return false;
+    Node* baru = new Node;
+    baru->data = nilai;
+    baru->next = s.top;
+    s.top = baru;
+    return true;
 }
 
 // =============================================================================
@@ -300,7 +304,15 @@ bool push(Stack& s, int nilai) {
 // =============================================================================
 
 bool pop(Stack& s, int& nilai) {
-    return false;
+    if(s.top == nullptr){
+        return false;
+    }
+
+    Node* keluar = s.top;
+    nilai = keluar->data;
+    s.top = keluar->next;
+    delete keluar;
+    return true;
 }
 
 // =============================================================================
@@ -347,6 +359,11 @@ bool pop(Stack& s, int& nilai) {
 // =============================================================================
 
 void clear(Stack& s) {
+    while(s.top != nullptr){
+        Node* berikut = s.top->next;
+        delete s.top;
+        s.top = berikut;
+    }
 }
 
 // =============================================================================
@@ -410,7 +427,31 @@ void clear(Stack& s) {
 // =============================================================================
 
 bool kurungSeimbang(const string& ekspresi) {
-    return false;
+    Stack tumpukan;
+    inisialisasi(tumpukan);
+
+    for(char c : ekspresi){
+        if(c == '(' || c == '[' || c == '{'){
+            push(tumpukan, c);
+        }else if(c == ')' || c == ']' || c == '}'){
+            int atas;
+
+            if(!pop(tumpukan, atas)){
+                clear(tumpukan);
+                return false;
+            }
+            char buka = static_cast<char>(atas);
+            bool cocok = (c == ')' && buka == '(') || (c == ']' && buka == '[') || (c == '}' && buka == '{');
+
+            if(!cocok){
+                clear(tumpukan);
+                return false;
+            }
+        }
+    }
+    bool seimbang = isEmpty(tumpukan);
+    clear(tumpukan);
+    return seimbang;
 }
 
 // =============================================================================
